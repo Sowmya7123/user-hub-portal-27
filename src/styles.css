@@ -1,6 +1,7 @@
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
+@source inline("bg-level-{1,2,3,4,5} text-level-{1,2,3,4,5} border-level-{1,2,3,4,5}");
 
 @custom-variant dark (&:is(.dark *));
 
