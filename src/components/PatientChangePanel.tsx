@@ -19,7 +19,7 @@ const lvl = (r: TriageResult) => (r.level === null ? "Not assessed" : `Level ${r
 
 export function PatientChangePanel({ baseline }: { baseline: Snapshot }) {
   const [lang, setLang] = useState("en");
-  const L = LANGS.find((l) => l.code === lang) ?? LANGS[0];
+  const L = LANGS.find((l) => l.code === lang) ?? LANGS[0]!;
   const t = L.t;
   const [onset, setOnset] = useState("");
   const [changes, setChanges] = useState<{ at: Date; text: string }[]>([]);
@@ -28,8 +28,8 @@ export function PatientChangePanel({ baseline }: { baseline: Snapshot }) {
   const [fu, setFu] = useState<RawInputs>({ ...baseline.inputs, complaint: "" });
 
   const history = [baseline, ...followUps];
-  const latest = history[history.length - 1];
-  const previous = history.length > 1 ? history[history.length - 2] : null;
+  const latest = history[history.length - 1] ?? baseline;
+  const previous = history.length > 1 ? (history[history.length - 2] ?? null) : null;
   const g = guard(latest.inputs, { onset });
   const reasons = reviewReasons(latest.result, g);
 
