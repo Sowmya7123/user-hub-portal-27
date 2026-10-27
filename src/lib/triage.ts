@@ -1,13 +1,13 @@
 export type TriageInput = {
-  age?: number;
-  sex?: "M" | "F" | "O";
-  systolic?: number;
-  diastolic?: number;
-  pulse?: number;
-  tempC?: number;
-  spo2?: number;
+  age?: number | undefined;
+  sex?: "M" | "F" | "O" | undefined;
+  systolic?: number | undefined;
+  diastolic?: number | undefined;
+  pulse?: number | undefined;
+  tempC?: number | undefined;
+  spo2?: number | undefined;
   complaint: string;
-  conditions?: string;
+  conditions?: string | undefined;
 };
 
 export type TriageResult = {
