@@ -40,6 +40,9 @@ const DEPT_KEYWORDS: { dept: string; terms: string[] }[] = [
   { dept: "Gastroenterology", terms: ["stomach", "vomit", "diarrh", "loose motion", "pet dard", "abdominal"] },
 ];
 
+/** Physiologic plausibility ranges used to discard impossible readings (data quality, not clinical thresholds). */
+export const VITAL_RANGES = { systolic: [40, 260], pulse: [20, 250], tempC: [30, 44], spo2: [40, 100] } as const;
+
 const rank = (a: number, b: number) => Math.min(a, b) as 1 | 2 | 3 | 4 | 5;
 
 /** Treats a vital as unknown when it is missing or physiologically impossible. */
@@ -58,10 +61,10 @@ export function triage(input: TriageInput): TriageResult {
 
   // Data-quality checks: implausible values (e.g. temp 96°C) are discarded, not trusted.
   const checks = {
-    systolic: plausible(input.systolic, 40, 260),
-    pulse: plausible(input.pulse, 20, 250),
-    tempC: plausible(input.tempC, 30, 44),
-    spo2: plausible(input.spo2, 40, 100),
+    systolic: plausible(input.systolic, ...VITAL_RANGES.systolic),
+    pulse: plausible(input.pulse, ...VITAL_RANGES.pulse),
+    tempC: plausible(input.tempC, ...VITAL_RANGES.tempC),
+    spo2: plausible(input.spo2, ...VITAL_RANGES.spo2),
   };
   const implausible = Object.entries(checks).filter(([, c]) => c.present && !c.ok).map(([k]) => k);
   if (implausible.length) notes.push(`Ignored implausible values: ${implausible.join(", ")} — please re-measure.`);
