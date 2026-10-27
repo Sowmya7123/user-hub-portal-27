@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/use-auth";
 import { triage, LEVELS, type TriageResult } from "@/lib/triage";
+import { PatientChangePanel, type Snapshot } from "@/components/PatientChangePanel";
 
 export const Route = createFileRoute("/triage")({
   head: () => ({
@@ -27,6 +28,7 @@ function TriagePage() {
   const { user, loading } = useAuth();
   const [f, setF] = useState(EMPTY);
   const [result, setResult] = useState<TriageResult | null>(null);
+  const [baseline, setBaseline] = useState<Snapshot | null>(null);
 
   if (loading) return <div className="py-24 text-center text-muted-foreground">Loading…</div>;
   if (!user) {
@@ -47,7 +49,9 @@ function TriagePage() {
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    setResult(triage({ age: num(f.age), systolic: num(f.systolic), diastolic: num(f.diastolic), pulse: num(f.pulse), tempC: num(f.tempC), spo2: num(f.spo2), complaint: f.complaint }));
+    const r = triage({ age: num(f.age), systolic: num(f.systolic), diastolic: num(f.diastolic), pulse: num(f.pulse), tempC: num(f.tempC), spo2: num(f.spo2), complaint: f.complaint });
+    setResult(r);
+    setBaseline({ at: new Date(), inputs: { ...f }, result: r });
   };
 
   const fields: [keyof typeof EMPTY, string, string][] = [
@@ -75,13 +79,14 @@ function TriagePage() {
           </div>
           <div className="flex gap-3">
             <Button type="submit" size="lg" className="flex-1">Assess patient</Button>
-            <Button type="button" size="lg" variant="outline" onClick={() => { setF(EMPTY); setResult(null); }} aria-label="Reset form"><RotateCcw className="h-4 w-4" /></Button>
+            <Button type="button" size="lg" variant="outline" onClick={() => { setF(EMPTY); setResult(null); setBaseline(null); }} aria-label="Reset form"><RotateCcw className="h-4 w-4" /></Button>
           </div>
         </form>
         <div aria-live="polite">{result ? <ResultCard r={result} /> : (
           <div className="grid h-full min-h-60 place-items-center rounded-2xl border border-dashed p-6 text-center text-muted-foreground">Result will appear here.</div>
         )}</div>
       </div>
+      {baseline && <PatientChangePanel key={baseline.at.getTime()} baseline={baseline} />}
     </div>
   );
 }
