@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import type { CSSProperties } from "react";
 import { LEVELS } from "@/lib/triage";
 
 export const Route = createFileRoute("/how-it-works")({
@@ -29,8 +30,8 @@ function HowItWorks() {
       <p className="mt-3 max-w-2xl text-lg text-muted-foreground">Missing a true emergency is far worse than over-calling a mild case — so every decision leans toward safety.</p>
 
       <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {STEPS.map((s) => (
-          <div key={s.n} className="rounded-2xl border bg-card p-6">
+        {STEPS.map((s, i) => (
+          <div key={s.n} data-reveal style={{ "--i": i } as CSSProperties} className="rounded-2xl border bg-card p-6">
             <span className="grid h-10 w-10 place-items-center rounded-full bg-primary font-display font-bold text-primary-foreground">{s.n}</span>
             <h3 className="mt-4 font-semibold">{s.t}</h3>
             <p className="mt-1 text-sm text-muted-foreground">{s.d}</p>
@@ -43,7 +44,7 @@ function HowItWorks() {
           <h2 className="text-2xl font-bold">The 5 triage levels</h2>
           <ul className="mt-5 space-y-3">
             {([1, 2, 3, 4, 5] as const).map((l) => (
-              <li key={l} className="flex items-center gap-4 rounded-xl border bg-card p-4">
+              <li key={l} data-reveal style={{ "--i": l } as CSSProperties} className="flex items-center gap-4 rounded-xl border bg-card p-4">
                 <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-lg font-display font-bold text-primary-foreground bg-level-${l}`}>{l}</span>
                 <div className="min-w-0 flex-1"><p className="font-semibold">{LEVELS[l].name}</p></div>
                 <span className="text-sm text-muted-foreground">{LEVELS[l].wait}</span>

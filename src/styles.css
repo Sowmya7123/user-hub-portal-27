@@ -69,7 +69,7 @@
   --level-3: oklch(0.8 0.15 85);
   --level-4: oklch(0.62 0.12 160);
   --level-5: oklch(0.6 0.08 230);
-  --gradient-hero: radial-gradient(circle at 80% 20%, oklch(0.48 0.09 190 / 0.55), transparent 55%), linear-gradient(160deg, var(--hero), oklch(0.2 0.04 210));
+  --gradient-hero: radial-gradient(circle at 80% 20%, oklch(0.72 0.13 210 / 0.45), transparent 55%), radial-gradient(circle at 10% 90%, oklch(0.6 0.12 200 / 0.3), transparent 50%), linear-gradient(160deg, oklch(0.26 0.08 250), oklch(0.17 0.06 255));
   --shadow-soft: 0 12px 40px -16px oklch(0.27 0.05 200 / 0.25);
 }
 
@@ -85,3 +85,29 @@
 
 @utility bg-hero-gradient { background: var(--gradient-hero); }
 @utility shadow-soft { box-shadow: var(--shadow-soft); }
+
+/* Premium 3D scroll effects */
+@utility perspective-scene { perspective: 1200px; }
+@utility hero-3d {
+  transform: rotateY(-8deg) rotateX(4deg);
+  transform-style: preserve-3d;
+  box-shadow: 0 30px 60px -20px oklch(0.15 0.06 245 / 0.7), 0 0 0 1px oklch(0.75 0.13 210 / 0.35);
+  transition: transform 0.6s ease;
+  animation: float-y 6s ease-in-out infinite;
+  &:hover { transform: rotateY(0deg) rotateX(0deg); }
+}
+@keyframes float-y { 0%, 100% { translate: 0 0; } 50% { translate: 0 -10px; } }
+
+[data-reveal] {
+  opacity: 0;
+  transform: perspective(900px) translateY(28px) rotateX(10deg);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.3s ease;
+  transition-delay: calc(var(--i, 0) * 90ms);
+}
+[data-reveal].is-visible { opacity: 1; transform: perspective(900px) translateY(0) rotateX(0); }
+[data-reveal].is-visible:hover { transform: perspective(900px) translateY(-6px) rotateX(3deg) rotateY(-3deg); transition-delay: 0s; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal], [data-reveal].is-visible, [data-reveal].is-visible:hover { opacity: 1; transform: none; transition: none; }
+  .hero-3d { animation: none; transform: none; }
+}
