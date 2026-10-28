@@ -37,7 +37,7 @@ function Login() {
     if (error) {
       const m = error.message.toLowerCase();
       toast.error(m.includes("not confirmed") ? "Please confirm your email first — check your inbox for the link."
-        : m.includes("invalid login") ? "Wrong email or password. Please try again." : error.message);
+        : m.includes("invalid login") ? "Wrong email or password. If you signed up with Google, use \"Continue with Google\" instead." : error.message);
       return;
     }
     toast.success("Welcome back!");
