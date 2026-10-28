@@ -34,7 +34,12 @@ function Login() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setBusy(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      const m = error.message.toLowerCase();
+      toast.error(m.includes("not confirmed") ? "Please confirm your email first — check your inbox for the link."
+        : m.includes("invalid login") ? "Wrong email or password. Please try again." : error.message);
+      return;
+    }
     toast.success("Welcome back!");
     navigate({ to: "/triage" });
   };
