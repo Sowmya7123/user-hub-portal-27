@@ -38,15 +38,17 @@ function Index() {
               </Button>
             </div>
           </div>
-          <img src={hero} alt="Nurse assessing a patient in an outpatient waiting area" className="aspect-[4/3] w-full rounded-2xl object-cover shadow-soft" width={1280} height={960} />
+          <div className="perspective-scene">
+            <img src={hero} alt="Nurse assessing a patient in an outpatient waiting area" className="hero-3d aspect-[4/3] w-full rounded-2xl object-cover" width={1280} height={960} />
+          </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-16">
         <h2 className="text-3xl font-bold">Built for the real queue</h2>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {FEATURES.map((f) => (
-            <div key={f.title} className="rounded-2xl border bg-card p-6 shadow-soft">
+          {FEATURES.map((f, i) => (
+            <div key={f.title} data-reveal style={{ "--i": i } as React.CSSProperties} className="rounded-2xl border bg-card p-6 shadow-soft">
               <f.icon className="h-7 w-7 text-primary" />
               <h3 className="mt-4 text-lg font-semibold">{f.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{f.text}</p>
