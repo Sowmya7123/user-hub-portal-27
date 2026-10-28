@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import type { CSSProperties } from "react";
 import { ShieldAlert, Timer, Languages, HandHelping } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import hero from "@/assets/hero.jpg";
@@ -48,7 +49,7 @@ function Index() {
         <h2 className="text-3xl font-bold">Built for the real queue</h2>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURES.map((f, i) => (
-            <div key={f.title} data-reveal style={{ "--i": i } as React.CSSProperties} className="rounded-2xl border bg-card p-6 shadow-soft">
+            <div key={f.title} data-reveal style={{ "--i": i } as CSSProperties} className="rounded-2xl border bg-card p-6 shadow-soft">
               <f.icon className="h-7 w-7 text-primary" />
               <h3 className="mt-4 text-lg font-semibold">{f.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{f.text}</p>
