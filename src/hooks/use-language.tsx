@@ -13,7 +13,7 @@ type LangCtx = { lang: string; setLang: (code: string) => void; t: (key: TKey) =
 const LanguageCtx = createContext<LangCtx>({
   lang: "en",
   setLang: () => {},
-  t: (k) => MERGED.en?.[k] ?? String(k),
+  t: (k) => MERGED["en"]?.[k] ?? String(k),
   rtl: false,
 });
 
@@ -35,7 +35,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = lang;
     document.documentElement.dir = rtl ? "rtl" : "ltr";
   }, [lang, rtl]);
-  const t = (key: TKey) => MERGED[lang]?.[key] ?? MERGED.en?.[key] ?? String(key);
+  const t = (key: TKey) => MERGED[lang]?.[key] ?? MERGED["en"]?.[key] ?? String(key);
   return <LanguageCtx.Provider value={{ lang, setLang, t, rtl }}>{children}</LanguageCtx.Provider>;
 }
 
