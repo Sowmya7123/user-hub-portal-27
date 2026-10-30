@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Clock, ShieldAlert, Info, GitCompare } from "lucide-react";
+import { Clock, ShieldAlert, Info, GitCompare, Mic, MicOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +27,34 @@ export function PatientChangePanel({ baseline }: { baseline: Snapshot }) {
   const [followUps, setFollowUps] = useState<Snapshot[]>([]);
   const [fu, setFu] = useState<RawInputs>({ ...baseline.inputs, complaint: "" });
 
+  // Voice recording states for both sections
+  const [isListeningMain, setIsListeningMain] = useState(false);
+  const [isListeningFu, setIsListeningFu] = useState(false);
+
+  // Reusable Speech Recognition Helper
+  const startVoiceInput = (onResultText: (text: string) => void, setIsActive: (val: boolean) => void) => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Speech recognition is not supported in this browser. Please use Google Chrome.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'en-US'; // English text conversion
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => setIsActive(true);
+    recognition.onresult = (event) => {
+      const speechToText = event.results[0][0].transcript;
+      onResultText(speechToText);
+    };
+    recognition.onerror = () => setIsActive(false);
+    recognition.onend = () => setIsActive(false);
+
+    recognition.start();
+  };
+
   const history = [baseline, ...followUps];
   const latest = history[history.length - 1] ?? baseline;
   const previous = history.length > 1 ? (history[history.length - 2] ?? null) : null;
@@ -39,6 +67,7 @@ export function PatientChangePanel({ baseline }: { baseline: Snapshot }) {
     setChanges([...changes, { at: new Date(), text }]);
     setChangeText("");
   };
+
   const recordFollowUp = (e: React.FormEvent) => {
     e.preventDefault();
     const inputs = { ...fu, complaint: fu.complaint.trim().slice(0, 1000) };
@@ -128,10 +157,35 @@ export function PatientChangePanel({ baseline }: { baseline: Snapshot }) {
             </div>
           ))}
         </div>
-        <div className="space-y-1.5">
-          <Label htmlFor="fu-c">{t.current}</Label>
-          <Textarea id="fu-c" rows={2} maxLength={1000} value={fu.complaint} onChange={(e) => setFu({ ...fu, complaint: e.target.value })} />
+        
+        {/* Chief Complaint Box with Integrated Voice Button */}
+        <div className="space-y-1.5 relative">
+          <div className="flex justify-between items-center">
+            <Label htmlFor="fu-c">{t.current}</Label>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => startVoiceInput(
+                (spokenText) => setFu((prev) => ({ ...prev, complaint: prev.complaint ? prev.complaint + " " + spokenText : spokenText })),
+                setIsListeningFu
+              )}
+              className={`flex items-center gap-1 h-8 px-3 text-xs ${isListeningFu ? 'bg-red-500 text-white animate-pulse' : ''}`}
+            >
+              {isListeningFu ? <MicOff className="h-3.5 w-3.5" /> : <Mic className="h-3.5 w-3.5 text-primary" />}
+              {isListeningFu ? "Listening..." : "Speak Complaint"}
+            </Button>
+          </div>
+          <Textarea 
+            id="fu-c" 
+            rows={2} 
+            maxLength={1000} 
+            value={fu.complaint} 
+            onChange={(e) => setFu({ ...fu, complaint: e.target.value })} 
+            placeholder="Type or click 'Speak Complaint' to talk..."
+          />
         </div>
+
         <Button type="submit">{t.save}</Button>
       </form>
 
